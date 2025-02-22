@@ -107,8 +107,8 @@ func print_available_numbers(used_values map[int]bool, n_puzzle int) {
 }
 
 func main() {
-    const rows int = 4
-    const columns int = 4
+    const rows int = 3
+    const columns int = 3
     const n_puzzle int = rows*columns - 1
     // used_values := make(map[int]bool)
 	goal_positions := make(map[int][]int)
@@ -121,11 +121,17 @@ func main() {
     }
 */
 
-	matrix := [][]int{
+	/*matrix := [][]int{
 		{1, 4, 2, 3},
 		{13, 6, 7, 8},
 		{5, 10, 11, 0},
 		{9, 14, 15, 12},
+	}*/
+
+	matrix := [][]int{
+		{0,2,1},
+        {5,4,3},
+        {6,7,8},
 	}
 
     // Fill the values with given numbers
