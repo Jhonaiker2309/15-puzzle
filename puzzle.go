@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var extraHeuristic = false
+
 // countInversions cuenta el número de inversiones en el puzzle (ignorando el espacio vacío 0).
 func countInversions(puzzle []int) int {
 	inversions := 0
@@ -73,13 +75,12 @@ func isSolvable(state State) bool {
 func main() {
 	var input string
 	if len(os.Args) > 1 {
-		input = strings.Join(os.Args[1:], " ")
-	} else {
-		fmt.Println("Ingrese 16 números separados por espacio:")
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		input = scanner.Text()
+		extraHeuristic = os.Args[1] == "-extra_heuristic"
 	}
+	fmt.Println("Ingrese 16 números separados por espacio:")
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	input = scanner.Text()
 	fields := strings.Fields(input)
 	if len(fields) != 16 {
 		fmt.Println("Debe ingresar 16 números")
@@ -105,7 +106,7 @@ func main() {
 
 	GenerateMovingDistances()
 
-	HeuristicCalculus(initial, true)
+	HeuristicCalculus(initial, true, extraHeuristic)
 
 	// Display puzzle state
 	fmt.Println("\nCurrent puzzle state:")

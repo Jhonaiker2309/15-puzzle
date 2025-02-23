@@ -13,7 +13,7 @@ type State [4][4]int
 // Heurística combinada: Manhattan + Linear Conflict
 // Se asume que la función HeuristicCalculus está definida en otro lado.
 func heuristic(state State) int {
-	return HeuristicCalculus(state, false)
+	return HeuristicCalculus(state, false, extraHeuristic)
 }
 
 // Verifica si el estado es el objetivo: 1,2,3,...,15 y 0 en la esquina inferior derecha

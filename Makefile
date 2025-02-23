@@ -11,6 +11,10 @@ run:
 	@echo "Ejecutando la aplicación..."
 	./$(BINARY_NAME)
 
+extra:
+	@echo "Ejecutando la aplicación..."
+	./$(BINARY_NAME) -extra_heuristic
+
 clean:
 	@echo "Limpiando..."
 	rm -f $(BINARY_NAME)

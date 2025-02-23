@@ -235,6 +235,36 @@ func walkingDistance(matrix [4][4]int) int {
 	return total
 }
 
+// Corner Conflict heuristic
+func CornerConflict(state [4][4]int) int {
+	conflict := 0
+	// Goal corner positions: {1 -> (0,0), 4 -> (0,3), 13 -> (3,0), 15 -> (3,3)}
+	cornerTiles := map[int][2]int{
+		1:  {0, 0},
+		4:  {0, 3},
+		13: {3, 0},
+		15: {3, 3},
+	}
+
+	for tile, goalPos := range cornerTiles {
+		for i := 0; i < 4; i++ {
+			for j := 0; j < 4; j++ {
+				if state[i][j] == tile {
+					// If tile is not in its corner position, check for conflicts
+					if i != goalPos[0] || j != goalPos[1] {
+						// If the tile is blocked by another tile, add penalty
+						if (i == 0 && state[i+1][j] != 0) || (j == 0 && state[i][j+1] != 0) ||
+							(i == 3 && state[i-1][j] != 0) || (j == 3 && state[i][j-1] != 0) {
+							conflict += 2
+						}
+					}
+				}
+			}
+		}
+	}
+	return conflict
+}
+
 // heuristicCalculus calculates the heuristic value for a given puzzle state by combining
 // multiple heuristic metrics: Manhattan Distance, Linear Conflict, and Walking Distance.
 // Parameters:
@@ -243,7 +273,7 @@ func walkingDistance(matrix [4][4]int) int {
 //
 // Returns:
 //   - The total heuristic value as an integer.
-func HeuristicCalculus(matrix [4][4]int, print bool) int {
+func HeuristicCalculus(matrix [4][4]int, print bool, testHeuristic bool) int {
 	// Calculate the Manhattan Distance heuristic, which sums the distances of each tile
 	// from its goal position.
 	manhattanDistanceValue := ManhattanDistance(matrix)
@@ -256,14 +286,31 @@ func HeuristicCalculus(matrix [4][4]int, print bool) int {
 	// required to solve the puzzle based on the positions of tiles relative to their goals.
 	walkingDistanceValue := walkingDistance(matrix)
 
+	if testHeuristic {
+		cornerConflictValue := CornerConflict(matrix)
+
+		// Combine the four heuristic values to get the total heuristic estimate.
+		heuristicValue := (manhattanDistanceValue / 3) + linearConflictValue + walkingDistanceValue + (cornerConflictValue / 2)
+
+		// Print the individual heuristic values and the total for debugging or analysis.
+		if print {
+			fmt.Println("Heuristica usada: h = (manhattanDistanceValue / 3) + linearConflictValue + walkingDistanceValue + (cornerConflictValue / 2)")
+			fmt.Printf("Manhattan: %d, Linear Conflict: %d, Walking Distance: %d, Corner Conflict: %d, Total: %d\n",
+				manhattanDistanceValue, linearConflictValue, walkingDistanceValue, cornerConflictValue, heuristicValue)
+		}
+		// Return the total heuristic value.
+		return heuristicValue
+	}
 	// Combine the three heuristic values to get the total heuristic estimate.
 	heuristicValue := (manhattanDistanceValue / 3) + linearConflictValue + walkingDistanceValue
 
 	// Print the individual heuristic values and the total for debugging or analysis.
 	if print {
+		fmt.Println("Heuristica usada: h = (manhattanDistanceValue / 3) + linearConflictValue + walkingDistanceValue")
 		fmt.Printf("Manhattan: %d, Linear Conflict: %d, Walking Distance: %d, Total: %d\n",
 			manhattanDistanceValue, linearConflictValue, walkingDistanceValue, heuristicValue)
 	}
 	// Return the total heuristic value.
 	return heuristicValue
+
 }
