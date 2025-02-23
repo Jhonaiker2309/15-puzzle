@@ -11,26 +11,26 @@ import (
 )
 
 var (
-    // statesCache holds the precomputed matrix states loaded from the JSON file.
-    statesCache map[string]int
-    // loadStatesOnce ensures that statesCache is loaded only once.
-    loadStatesOnce sync.Once
+	// statesCache holds the precomputed matrix states loaded from the JSON file.
+	statesCache map[string]int
+	// loadStatesOnce ensures that statesCache is loaded only once.
+	loadStatesOnce sync.Once
 )
 
 // loadMatrixStates loads the matrix states from the JSON file and caches them in statesCache.
 func loadMatrixStates(filename string) error {
-    data, err := os.ReadFile(filename)
-    if err != nil {
-        return fmt.Errorf("error reading file: %v", err)
-    }
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return fmt.Errorf("error reading file: %v", err)
+	}
 
-    var states map[string]int
-    if err := json.Unmarshal(data, &states); err != nil {
-        return fmt.Errorf("error decoding JSON: %v", err)
-    }
+	var states map[string]int
+	if err := json.Unmarshal(data, &states); err != nil {
+		return fmt.Errorf("error decoding JSON: %v", err)
+	}
 
-    statesCache = states
-    return nil
+	statesCache = states
+	return nil
 }
 
 // Calcula la heurística Manhattan Distance para un 15-puzzle
@@ -145,20 +145,20 @@ func createVerticalDistanceMapping() map[int]int {
 // Returns:
 // - The associated integer value or error if not found.
 func getMatrixValue(matrix [][]int) (int, error) {
-    // Ensure the states are loaded only once.
-    loadStatesOnce.Do(func() {
-        if err := loadMatrixStates("matrix_states.json"); err != nil {
-            // In a production system, you might handle this error differently.
-            fmt.Println("Error loading matrix states:", err)
-        }
-    })
+	// Ensure the states are loaded only once.
+	loadStatesOnce.Do(func() {
+		if err := loadMatrixStates("matrix_states.json"); err != nil {
+			// In a production system, you might handle this error differently.
+			fmt.Println("Error loading matrix states:", err)
+		}
+	})
 
-    key := matrixToKey(matrix)
-    if value, exists := statesCache[key]; exists {
-        return value, nil
-    }
+	key := matrixToKey(matrix)
+	if value, exists := statesCache[key]; exists {
+		return value, nil
+	}
 
-    return -1, fmt.Errorf("key '%s' not found", key)
+	return -1, fmt.Errorf("key '%s' not found", key)
 }
 
 // transposeMatrix swaps rows and columns of a matrix.

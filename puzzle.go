@@ -8,43 +8,66 @@ import (
 	"strings"
 )
 
-func isSolvable(matrix [][]int) bool {
-	n := len(matrix)
+// countInversions cuenta el número de inversiones en el puzzle (ignorando el espacio vacío 0).
+func countInversions(puzzle []int) int {
 	inversions := 0
-	blankRowFromBottom := 0
-	flat := make([]int, 0, n*n)
-
-	// Flatten the matrix and record the blank's row (from bottom)
-	for i := 0; i < n; i++ {
-		for j := 0; j < len(matrix[i]); j++ {
-			val := matrix[i][j]
-			flat = append(flat, val)
-			if val == 0 {
-				// row from bottom: 1-indexed, so for i=0 (top row) in a 4x4, it's row 4 from bottom.
-				blankRowFromBottom = n - i
-			}
-		}
-	}
-
-	// Count inversions: for each tile, count how many subsequent tiles are smaller
-	for i := 0; i < len(flat); i++ {
-		if flat[i] == 0 {
+	for i := 0; i < len(puzzle); i++ {
+		if puzzle[i] == 0 {
 			continue
 		}
-		for j := i + 1; j < len(flat); j++ {
-			if flat[j] != 0 && flat[i] > flat[j] {
+		for j := i + 1; j < len(puzzle); j++ {
+			if puzzle[j] != 0 && puzzle[i] > puzzle[j] {
 				inversions++
 			}
 		}
 	}
+	return inversions
+}
 
-	// For even grid width (4x4):
-	// Solvable if (inversions + blankRowFromBottom) is odd.
-	if n%2 == 0 {
-		return (inversions+blankRowFromBottom)%2 == 1
+// findBlankPosition encuentra la fila donde está el espacio vacío (contando desde abajo, 1-indexed).
+func findBlankPosition(puzzle []int, n int) int {
+	blankIndex := -1
+
+	for i, value := range puzzle {
+		if value == 0 {
+			blankIndex = i
+			break
+		}
 	}
-	// For odd grid width, solvable if inversions count is even.
-	return inversions%2 == 0
+
+	// Calcula la fila desde abajo
+	return n - (blankIndex / n)
+}
+
+// isSolvable verifica si el estado del 15-puzzle es resoluble.
+func isSolvable(state State) bool {
+	n := 4 // Tamaño de la cuadrícula (4x4)
+	var puzzle []int
+
+	// Convertir la matriz 4x4 en una lista lineal
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			puzzle = append(puzzle, state[i][j])
+		}
+	}
+
+	inversions := countInversions(puzzle)
+	blankRow := findBlankPosition(puzzle, n)
+
+	// Aplicando la regla de solvencia
+	if n%2 != 0 {
+		// Si el tamaño de la cuadrícula es IMPAR (como 3x3), el puzzle es resoluble si el número de inversiones es par
+		return inversions%2 == 0
+	} else {
+		// Si el tamaño de la cuadrícula es PAR (como 4x4)
+		if blankRow%2 == 0 {
+			// Si el espacio vacío está en una fila PAR desde abajo, el número de inversiones debe ser IMPAR
+			return inversions%2 != 0
+		} else {
+			// Si el espacio vacío está en una fila IMPAR desde abajo, el número de inversiones debe ser PAR
+			return inversions%2 == 0
+		}
+	}
 }
 
 func main() {
@@ -89,6 +112,13 @@ func main() {
 			fmt.Printf("%d\t", val)
 		}
 		fmt.Println()
+	}
+
+	if isSolvable(initial) {
+		fmt.Println("The puzzle is solvable.")
+	} else {
+		fmt.Println("The puzzle is not solvable.")
+		return
 	}
 
 	SolverIDAStar(initial)
