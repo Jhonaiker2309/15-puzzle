@@ -1,4 +1,4 @@
-BINARY_NAME= search
+BINARY_NAME= solver
 GO=go
 
 .PHONY: build clean run
