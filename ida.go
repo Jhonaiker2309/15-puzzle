@@ -11,6 +11,7 @@ var generatedStates int
 type State [4][4]int
 
 // Heurística combinada: Manhattan + Linear Conflict
+// Se asume que la función HeuristicCalculus está definida en otro lado.
 func heuristic(state State) int {
 	return HeuristicCalculus(state, false)
 }
@@ -99,14 +100,14 @@ func move(state State, m Move) (State, bool) {
 // Función recursiva de búsqueda (IDA*) que retorna:
 // - un flag de solución encontrada,
 // - un nuevo límite si no se encontró solución,
-// - y el camino (slice de movimientos) en caso de éxito.
-func search(state State, g int, bound int, prevMove *Move, path []Move) (bool, int, []Move) {
+// - y el camino (slice de estados) en caso de éxito.
+func search(state State, g int, bound int, prevMove *Move, statePath []State) (bool, int, []State) {
 	f := g + heuristic(state)
 	if f > bound {
 		return false, f, nil
 	}
 	if isGoal(state) {
-		return true, bound, path
+		return true, bound, statePath
 	}
 	minBound := math.MaxInt32
 	// Probar movimientos en orden: Up, Down, Left, Right
@@ -120,8 +121,8 @@ func search(state State, g int, bound int, prevMove *Move, path []Move) (bool, i
 			continue
 		}
 		generatedStates++ // Contamos el nuevo estado generado
-		newPath := append(path, m)
-		solved, t, resultPath := search(newState, g+1, bound, &m, newPath)
+		newStatePath := append(statePath, newState)
+		solved, t, resultPath := search(newState, g+1, bound, &m, newStatePath)
 		if solved {
 			return true, t, resultPath
 		}
@@ -133,11 +134,12 @@ func search(state State, g int, bound int, prevMove *Move, path []Move) (bool, i
 }
 
 // Función principal del solver: ejecuta IDA* iterativamente
-func idaStar(root State) ([]Move, bool) {
+func idaStar(root State) ([]State, bool) {
 	bound := heuristic(root)
+	initialPath := []State{root}
 	for {
-		solved, newBound, path := search(root, 0, bound, nil, []Move{})
-		fmt.Printf("Nuevo limite: %d Estados generados: %d\n", newBound, generatedStates)
+		solved, newBound, path := search(root, 0, bound, nil, initialPath)
+		fmt.Printf("Nuevo límite: %d Estados generados: %d\n", newBound, generatedStates)
 		if solved {
 			return path, true
 		}
@@ -148,29 +150,33 @@ func idaStar(root State) ([]Move, bool) {
 	}
 }
 
+// SolverIDAStar ejecuta el solver y muestra la secuencia de estados
 func SolverIDAStar(initial State) {
 	generatedStates = 0
 	solution, solved := idaStar(initial)
 	if solved {
 		fmt.Println("¡Solución encontrada!")
-		fmt.Println("Número de movimientos:", len(solution))
+		// Número de movimientos = len(solution)-1 (porque el primer estado es el inicial)
+		fmt.Println("Número de movimientos:", len(solution)-1)
 		fmt.Println("Estados generados:", generatedStates)
-		fmt.Print("Movimientos: ")
-		for _, m := range solution {
-			switch m {
-			case Up:
-				fmt.Print("Arriba ")
-			case Down:
-				fmt.Print("Abajo ")
-			case Left:
-				fmt.Print("Izquierda ")
-			case Right:
-				fmt.Print("Derecha ")
-			}
+		fmt.Println("Secuencia de estados:")
+		for i, state := range solution {
+			fmt.Printf("Paso %d:\n", i)
+			printState(state)
+			fmt.Println()
 		}
-		fmt.Println()
 	} else {
 		fmt.Println("No se encontró solución.")
 	}
 	return
+}
+
+// Función auxiliar para imprimir un estado
+func printState(state State) {
+	for i := 0; i < 4; i++ {
+		for j := 0; j < 4; j++ {
+			fmt.Printf("%2d ", state[i][j])
+		}
+		fmt.Println()
+	}
 }
