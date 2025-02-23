@@ -103,6 +103,8 @@ func main() {
 		}
 	}
 
+	GenerateMovingDistances()
+
 	HeuristicCalculus(initial, true)
 
 	// Display puzzle state

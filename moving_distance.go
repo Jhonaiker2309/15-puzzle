@@ -16,7 +16,7 @@ type MatrixState struct {
 
 // matrixToKey converts a 4x4 matrix to a string key
 // Example: [[1 2][3 4]] becomes "1,2,3,4"
-func matrixToKey(matrix [][]int) string {
+func MatrixToKey(matrix [][]int) string {
 	var parts []string
 	for _, row := range matrix {
 		for _, num := range row {
@@ -155,7 +155,20 @@ func printMatrix(matrix [][]int) {
 	fmt.Println()
 }
 
-func main() {
+func GenerateMovingDistances() {
+	// Nombre del archivo
+	fileName := "matrix_states.json"
+
+	// Verificar si el archivo ya existe
+	if _, err := os.Stat(fileName); err == nil {
+		fmt.Println("El archivo ya ha sido generado, no se generará nuevamente.")
+		return
+	} else if os.IsNotExist(err) {
+		fmt.Println("El archivo no existe, generándolo ahora...")
+	} else {
+		fmt.Println("Error al verificar el archivo:", err)
+	}
+
 	// Initial puzzle state
 	initialMatrix := [][]int{
 		{4, 0, 0, 0},
@@ -165,11 +178,11 @@ func main() {
 	}
 
 	// Convert initial state to key and run BFS
-	startKey := matrixToKey(initialMatrix)
+	startKey := MatrixToKey(initialMatrix)
 	distances := bfs(startKey)
 
 	// Save results to JSON file
-	if err := saveResults(distances, "matrix_states.json"); err != nil {
+	if err := saveResults(distances, fileName); err != nil {
 		fmt.Println("Error saving results:", err)
 		return
 	}
