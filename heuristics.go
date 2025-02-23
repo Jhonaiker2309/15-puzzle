@@ -221,7 +221,7 @@ func walkingDistance(matrix [4][4]int) int {
 //
 // Returns:
 //   - The total heuristic value as an integer.
-func HeuristicCalculus(matrix [4][4]int) int {
+func HeuristicCalculus(matrix [4][4]int, print bool) int {
 	// Calculate the Manhattan Distance heuristic, which sums the distances of each tile
 	// from its goal position.
 	manhattanDistanceValue := ManhattanDistance(matrix)
@@ -238,9 +238,10 @@ func HeuristicCalculus(matrix [4][4]int) int {
 	heuristicValue := (manhattanDistanceValue / 3) + linearConflictValue + walkingDistanceValue
 
 	// Print the individual heuristic values and the total for debugging or analysis.
-	// fmt.Printf("Manhattan: %d, Linear Conflict: %d, Walking Distance: %d, Total: %d\n",
-	// 	manhattanDistanceValue, linearConflictValue, walkingDistanceValue, heuristicValue)
-
+	if print {
+		fmt.Printf("Manhattan: %d, Linear Conflict: %d, Walking Distance: %d, Total: %d\n",
+			manhattanDistanceValue, linearConflictValue, walkingDistanceValue, heuristicValue)
+	}
 	// Return the total heuristic value.
 	return heuristicValue
 }

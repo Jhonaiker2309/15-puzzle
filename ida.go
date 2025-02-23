@@ -12,7 +12,7 @@ type State [4][4]int
 
 // Heurística combinada: Manhattan + Linear Conflict
 func heuristic(state State) int {
-	return HeuristicCalculus(state)
+	return HeuristicCalculus(state, false)
 }
 
 // Verifica si el estado es el objetivo: 1,2,3,...,15 y 0 en la esquina inferior derecha
@@ -145,15 +145,6 @@ func idaStar(root State) ([]Move, bool) {
 			return nil, false
 		}
 		bound = newBound
-	}
-}
-
-func printState(state State) {
-	for i := 0; i < 4; i++ {
-		for j := 0; j < 4; j++ {
-			fmt.Printf("%2d ", state[i][j])
-		}
-		fmt.Println()
 	}
 }
 

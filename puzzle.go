@@ -80,7 +80,7 @@ func main() {
 		}
 	}
 
-	// HeuristicCalculus(matrix)
+	HeuristicCalculus(initial, true)
 
 	// Display puzzle state
 	fmt.Println("\nCurrent puzzle state:")
