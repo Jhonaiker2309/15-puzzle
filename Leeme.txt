@@ -1,0 +1,26 @@
+Versiones de Go probadas: 1.18.1 y 1.24
+
+Pasos para compilar, ejecutar y limpiar el proyecto:
+
+-Compilar el proyecto:
+Correr el siguiente comando en la terminal:
+    make build
+Esto generará un ejecutable llamado "solver".
+
+
+-Correr la version normal del proyecto (sin la heuristica extra):
+Correr el siguiente comando en la terminal:
+    make run
+Esto correrá el ejecutable
+
+-Correr la version del proyecto con la heuristica extra (corner conflict)
+Correr el siguiente comando en la terminal:
+    make extra
+Esto correrá el ejecutable con el flag -extra_heuristic
+
+-Limpiar el proyecto
+Para eliminar el ejecutable y el archivo JSON de resultados (walking_distance.json), ejecuta:
+    make clean
+
+Detalles sobre la heuristica extra:
+En general esta heuristica genera soluciones parecidas pero con muchos menos estados
