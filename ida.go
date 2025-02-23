@@ -156,15 +156,15 @@ func SolverIDAStar(initial State) {
 	solution, solved := idaStar(initial)
 	if solved {
 		fmt.Println("¡Solución encontrada!")
-		// Número de movimientos = len(solution)-1 (porque el primer estado es el inicial)
-		fmt.Println("Número de movimientos:", len(solution)-1)
-		fmt.Println("Estados generados:", generatedStates)
 		fmt.Println("Secuencia de estados:")
 		for i, state := range solution {
 			fmt.Printf("Paso %d:\n", i)
 			printState(state)
 			fmt.Println()
 		}
+		// Número de movimientos = len(solution)-1 (porque el primer estado es el inicial)
+		fmt.Println("Número de movimientos:", len(solution)-1)
+		fmt.Println("Estados generados:", generatedStates)
 	} else {
 		fmt.Println("No se encontró solución.")
 	}
